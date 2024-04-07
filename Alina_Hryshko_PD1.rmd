@@ -1,0 +1,23 @@
+---
+title: "PDPRPy"
+subtitle: "Praca Domowa nr 1"
+author: "Alina Hryshko"
+date: "2024-04-07"
+output: html_document
+---
+
+# Bardzo krótki wstęp
+
+Odtwarzamy wynik zapytań SQL przy użyciu wywołań funkcji bazowych oraz tych, które udostępniają pakiety `dplyr` oraz `data.table`.
+
+```{r message = FALSE}
+# Wczytanie rozwiązań
+library(compare)
+library(microbenchmark)
+source("Alina_Hryshko_PD1.R")
+```
+
+```{r}
+# Wczytanie danych
+Posts <- read.csv("data/Posts.csv.gz")
+```
