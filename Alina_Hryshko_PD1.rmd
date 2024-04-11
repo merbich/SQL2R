@@ -10,14 +10,46 @@ output: html_document
 
 Odtwarzamy wynik zapytań SQL przy użyciu wywołań funkcji bazowych oraz tych, które udostępniają pakiety `dplyr` oraz `data.table`.
 
+```{r}
+# Ustawienie katologu roboczego
+getwd()
+setwd("C:/Users/user/Desktop/sem6/r and python/praca domowa 1/SQL2R")
+```
+
 ```{r message = FALSE}
 # Wczytanie rozwiązań
 library(compare)
 library(microbenchmark)
+```
+```{r}
 source("Alina_Hryshko_PD1.R")
 ```
 
 ```{r}
 # Wczytanie danych
 Posts <- read.csv("data/Posts.csv.gz")
+Users <- read.csv("data/Users.csv.gz")
+Comments <- read.csv("data/Comments.csv.gz")
+PostLinks <- read.csv("data/PostLinks.csv.gz")
 ```
+
+## Zapytanie 1
+
+### Porównanie wyników
+
+```{r cache = TRUE}
+result.sql <- sqldf_1(Posts, Users)
+result.base <- base_1(Posts, Users)
+compare(result.sql, result.base, allowAll = TRUE)
+```
+
+### Oszacowanie czasowe
+
+```{r cache = TRUE}
+microbenchmark( sqldf = sqldf_1(Posts, Users),
+                base = base_1(Posts, Users))
+```
+
+### Opis
+
+Wybieramy pytania dla których ocena zakceptowanej odpowiedzi od najlepiej ocenianej odpowiedzi jest mniejsza o co najmnie 50. 
