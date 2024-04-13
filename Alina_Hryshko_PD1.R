@@ -48,7 +48,10 @@ base_1 <- function(Posts, Users) {
   # rows WHERE Location NOT IN ''
   x1 <- x1[x1$Location != "", ]
   # GROUP BY Location
-  x1 <- aggregate(x = x1$Location, by = x1["Location"], FUN = length)
+  x1 <- aggregate(x = x1$Location,
+                  by = x1["Location"],
+                  FUN = length,
+                  na.rm = TRUE)
   # Set name for column
   colnames(x1)[2] <- "Count"
   # Sort by Count column
@@ -62,6 +65,14 @@ base_1 <- function(Posts, Users) {
 dplyr_1 <- function(Posts, Users) {
   # Input the solution here
   #
+  x <- Users %>%
+    inner_join(Posts, by = c("Id" = "OwnerUserId")) %>%
+    filter(Location != "") %>%
+    group_by(Location) %>%
+    summarise(Count = n()) %>%
+    arrange(desc(Count)) %>%
+    slice(1:10)
+  x
 }
 
 data.table_1 <- function(Posts, Users) {
@@ -94,7 +105,9 @@ base_2 <- function(Posts, PostLinks) {
   # Input the solution here
   # GROUP BY RelatedPostId
   RelatedTab <- aggregate(x = PostLinks$RelatedPostId, 
-                          by = PostLinks["RelatedPostId"], FUN = length)
+                          by = PostLinks["RelatedPostId"],
+                          FUN = length,
+                          na.rm = TRUE)
   # SELECT RelatedPostId AS PostId, COUNT(*) AS NumLinks
   colnames(RelatedTab) <- c("PostId", "NumLinks")
   # WHERE Posts.PostTypeId=1
@@ -112,6 +125,15 @@ base_2 <- function(Posts, PostLinks) {
 dplyr_2 <- function(Posts, PostLinks) {
   # Input the solution here
   #
+  x1 <- PostLinks %>%
+    group_by(RelatedPostId) %>%
+    summarise(NumLinks = n())
+  names(x1)[which(names(x1) == "RelatedPostId")] <- "PostId"
+  x1 <- inner_join(x1, Posts, by = c("PostId" = "Id")) %>%
+    filter(PostTypeId == 1) %>%
+    select(Title, NumLinks) %>%
+    arrange(desc(NumLinks))
+  x1
 }
 
 data.table_2 <- function(Posts, PostLinks) {
@@ -149,7 +171,10 @@ sqldf_3 <- function(Comments, Posts, Users) {
 base_3 <- function(Comments, Posts, Users) {
   # Input the solution here
   # GROUP BY PostId
-  CmtTotScr <- aggregate(x = Comments$Score, by = Comments["PostId"], FUN = sum)
+  CmtTotScr <- aggregate(x = Comments$Score,
+                         by = Comments["PostId"],
+                         FUN = sum,
+                         na.rm = TRUE)
   # SELECT PostId, SUM(Score) AS CommentsTotalScore
   colnames(CmtTotScr) <- c("PostId", "CommentsTotalScore")
   # WHERE Posts.PostTypeId=1
@@ -182,6 +207,19 @@ base_3 <- function(Comments, Posts, Users) {
 dplyr_3 <- function(Comments, Posts, Users) {
   # Input the solution here
   #
+  CmtTotScr <- Comments %>%
+    group_by(PostId) %>%
+    summarise(CommentsTotalScore = sum(Score, na.rm = TRUE))
+  x1 <- inner_join(Posts, CmtTotScr, by = c("Id" = "PostId")) %>%
+    filter(PostTypeId == 1) %>%
+    inner_join(Users, by = c("OwnerUserId" = "Id")) %>%
+    arrange(desc(CommentsTotalScore)) %>%
+    select(Title, CommentCount, ViewCount,
+      CommentsTotalScore, DisplayName,
+      Reputation, Location
+    ) %>%
+    slice(1:10)
+  x1
 }
 
 data.table_3 <- function(Comments, Posts, Users) {
@@ -232,7 +270,8 @@ base_4 <- function(Posts, Users) {
   Questions <- aggregate(
                         x = ChoosenPosts$OwnerUserId,
                         by = ChoosenPosts["OwnerUserId"],
-                        FUN = length)
+                        FUN = length,
+                        na.rm = TRUE)
   # SELECT COUNT(*) as QuestionsNumber, OwnerUserId
   colnames(Questions) <- c("OwnerUserId", "QuestionsNumber")
 
@@ -242,7 +281,8 @@ base_4 <- function(Posts, Users) {
   Answers <- aggregate(
                        x = ChoosenPosts2$OwnerUserId,
                        by = ChoosenPosts2["OwnerUserId"],
-                       FUN = length)
+                       FUN = length,
+                       na.rm = TRUE)
   # SELECT COUNT(*) as AnswersNumber, OwnerUserId
   colnames(Answers) <- c("OwnerUserId", "AnswersNumber")
 
@@ -278,6 +318,25 @@ base_4 <- function(Posts, Users) {
 dplyr_4 <- function(Posts, Users) {
   # Input the solution here
   #
+  Questions <- Posts %>%
+    filter(PostTypeId == 1) %>%
+    group_by(OwnerUserId) %>%
+    summarise(QuestionsNumber = n())
+
+  Answers <- Posts %>%
+    filter(PostTypeId == 2) %>%
+    group_by(OwnerUserId) %>%
+    summarise(AnswersNumber = n())
+  PostsCounts <- inner_join(Answers, Questions, by = "OwnerUserId") %>%
+    filter(AnswersNumber>QuestionsNumber) %>%
+    arrange(desc(AnswersNumber)) %>%
+    slice(1:6)
+  x <- inner_join(PostsCounts, Users, by = c("OwnerUserId" = "Id")) %>%
+    select(DisplayName, QuestionsNumber,
+      AnswersNumber, Location,
+      Reputation, UpVotes, DownVotes
+    ) %>%
+    filter_all(all_vars(!is.na(.)))
 }
 
 data.table_4 <- function(Posts, Users) {
@@ -327,7 +386,8 @@ base_5 <- function(Posts, Users) {
   AnsCount <- aggregate(
                         x = ChoosenPosts$ParentId,
                         by = ChoosenPosts["ParentId"],
-                        FUN = length)
+                        FUN = length,
+                        na.rm = TRUE)
   # SELECT Posts.ParentId, COUNT(*) AS AnswersCount
   colnames(AnsCount) <- c("ParentId", "AnswersCount")
 
@@ -339,7 +399,8 @@ base_5 <- function(Posts, Users) {
   PostAuth <- aggregate(
                         x = PostAuth$AnswersCount,
                         by = PostAuth["OwnerUserId"],
-                        FUN = mean)
+                        FUN = mean,
+                        na.rm = TRUE)
 
   # JOIN Users ON Users.AccountId=PostAuth.OwnerUserId
   x1 <- merge(PostAuth, Users, by.x = "OwnerUserId", by.y = "AccountId")
@@ -359,6 +420,27 @@ base_5 <- function(Posts, Users) {
 dplyr_5 <- function(Posts, Users) {
   # Input the solution here
   #
+  AnsCount <- Posts %>%
+    filter(PostTypeId == 2) %>%
+    group_by(ParentId) %>%
+    summarise(AnswersCount = n())
+
+  PostAuth <- inner_join(AnsCount, Posts, by = c("ParentId" = "Id")) %>%
+    select(AnswersCount, ParentId, OwnerUserId)
+  names(PostAuth)[which(names(PostAuth) == "ParentId")] <- "Id"
+  x <- PostAuth %>%
+    group_by(OwnerUserId) %>%
+    summarise(AverageAnswersCount = mean(AnswersCount, na.rm = TRUE)) %>%
+    inner_join(Users, by = c("OwnerUserId"="AccountId")) %>%
+    select(OwnerUserId, DisplayName, Location, AverageAnswersCount) %>%
+    arrange(desc(AverageAnswersCount))
+  x <- x %>%
+    slice(1:10) %>%
+    rename(AccountId = OwnerUserId)
+  # Converting to data.frame, because
+  # "setting row names on a tibble is deprecated"
+  x <- as.data.frame(x)
+  rownames(x) <- NULL
 }
 
 data.table_5 <- function(Posts, Users) {
