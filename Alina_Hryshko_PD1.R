@@ -78,6 +78,12 @@ dplyr_1 <- function(Posts, Users) {
 data.table_1 <- function(Posts, Users) {
   # Input the solution here
   #
+  setDT(Users)
+  setDT(Posts)
+  joined_data <- Users[Posts, on = c(Id = "OwnerUserId")][!is.na(Location)]
+  location_counts <- joined_data[, .(Count = .N), by = Location]
+  x <- location_counts[order(-Count)][-1][1:10]
+  rownames(x) <- NULL
 }
 
 # -----------------------------------------------------------------------------#
@@ -139,6 +145,16 @@ dplyr_2 <- function(Posts, PostLinks) {
 data.table_2 <- function(Posts, PostLinks) {
   # Input the solution here
   #
+  setDT(PostLinks)
+  setDT(Posts)
+
+  RelatedTab <- PostLinks[, .(NumLinks = .N), by = RelatedPostId]
+  setnames(RelatedTab, "RelatedPostId", "PostId")
+  x <- RelatedTab[Posts, on = c(PostId = "Id")][PostTypeId == 1]
+  x <- x[order(-NumLinks)]
+  x <- x[, c("Title", "NumLinks"), with = FALSE]
+  x <- na.omit(x)
+  rownames(x) <- NULL
 }
 
 # -----------------------------------------------------------------------------#
@@ -225,6 +241,21 @@ dplyr_3 <- function(Comments, Posts, Users) {
 data.table_3 <- function(Comments, Posts, Users) {
   # Input the solution here
   #
+  setDT(Comments)
+  setDT(Posts)
+  setDT(Users)
+
+  CmtTotScr <- Comments[, .(CommentsTotalScore = sum(Score)), by = PostId]
+  PostBestComments <- CmtTotScr[Posts, on = c(PostId = "Id")][PostTypeId == 1]
+  PostBestComments <- PostBestComments[, c(
+                                           "OwnerUserId", "Title",
+                                           "CommentCount", "ViewCount",
+                                           "CommentsTotalScore")
+  , with = FALSE]
+  x <- PostBestComments[Users, on = c(OwnerUserId = "Id")]
+  x <- x[, c("Title", "CommentCount", "ViewCount", "CommentsTotalScore",
+             "DisplayName", "Reputation", "Location")]
+  x <- x[order(-CommentsTotalScore)][1:10]
 }
 
 # -----------------------------------------------------------------------------#
@@ -342,6 +373,23 @@ dplyr_4 <- function(Posts, Users) {
 data.table_4 <- function(Posts, Users) {
   # Input the solution here
   #
+  setDT(Posts)
+  setDT(Users)
+
+  Answers <- Posts[PostTypeId == 2]
+  Answers <- Answers[, .(AnswersNumber = .N), by = OwnerUserId]
+  Questions <- Posts[PostTypeId == 1]
+  Questions <- Questions[, .(QuestionsNumber = .N), by = OwnerUserId]
+  PostCounts <- Answers[Questions,
+                        on = c(OwnerUserId = "OwnerUserId"
+                        )][AnswersNumber>QuestionsNumber]
+  PostCounts <- PostCounts[order(-AnswersNumber)][1:6]
+  x <- PostCounts[Users, on = c(OwnerUserId = "Id")]
+  x <- x[, c("DisplayName", "QuestionsNumber",
+             "AnswersNumber", "Location",
+             "Reputation", "UpVotes", "DownVotes")]
+  x <- x[order(-AnswersNumber)]
+  x <- na.omit(x)
 }
 
 # -----------------------------------------------------------------------------#
@@ -446,4 +494,21 @@ dplyr_5 <- function(Posts, Users) {
 data.table_5 <- function(Posts, Users) {
   # Input the solution here
   #
+  setDT(Posts)
+  setDT(Users)
+
+  AnsCount <- Posts[PostTypeId == 2]
+  AnsCount <- AnsCount[, .(AnswersCount = .N), by = ParentId]
+
+  PostAuth <- AnsCount[Posts, on = c(ParentId = "Id")]
+  setnames(PostAuth, "ParentId", "Id")
+  PostAuth <- PostAuth[, c("AnswersCount", "Id", "OwnerUserId")]
+  x <- PostAuth[, .(AverageAnswersCount = 
+                      mean(AnswersCount, na.rm = TRUE)),
+                      by = OwnerUserId]
+  #x <- x[order(-AverageAnswersCount)]
+  x <- x[Users, on = c(OwnerUserId = "AccountId")]
+  x <- x[order(-AverageAnswersCount)][1:10]
+  setnames(x, "OwnerUserId", "AccountId")
+  x <- x[, c("AccountId", "DisplayName", "Location", "AverageAnswersCount")]
 }
