@@ -18,6 +18,7 @@ install.packages(c("sqldf", "dplyr", "data.table", "compare"))
 
 library(dplyr)
 library(sqldf)
+library(data.table)
 
 # -----------------------------------------------------------------------------#
 # Task 1
@@ -41,17 +42,12 @@ sqldf_1 <- function(Posts, Users) {
 }
 
 base_1 <- function(Posts, Users) {
-  # Input the solution here
-  #
   # JOIN Posts and Users
   x1 <- merge(Users, Posts, by.x = "Id", by.y = "OwnerUserId")
   # rows WHERE Location NOT IN ''
   x1 <- x1[x1$Location != "", ]
   # GROUP BY Location
-  x1 <- aggregate(x = x1$Location,
-                  by = x1["Location"],
-                  FUN = length,
-                  na.rm = TRUE)
+  x1 <- aggregate(Id ~ Location, data = x1, FUN = length)
   # Set name for column
   colnames(x1)[2] <- "Count"
   # Sort by Count column
@@ -76,14 +72,13 @@ dplyr_1 <- function(Posts, Users) {
 }
 
 data.table_1 <- function(Posts, Users) {
-  # Input the solution here
-  #
-  setDT(Users)
   setDT(Posts)
+  setDT(Users)
   joined_data <- Users[Posts, on = c(Id = "OwnerUserId")][!is.na(Location)]
   location_counts <- joined_data[, .(Count = .N), by = Location]
   x <- location_counts[order(-Count)][-1][1:10]
   rownames(x) <- NULL
+  x
 }
 
 # -----------------------------------------------------------------------------#
@@ -108,12 +103,13 @@ sqldf_2 <- function(Posts, PostLinks) {
 }
 
 base_2 <- function(Posts, PostLinks) {
+  Posts <- as.data.frame(Posts)
+  PostLinks <- as.data.frame(PostLinks)
   # Input the solution here
   # GROUP BY RelatedPostId
-  RelatedTab <- aggregate(x = PostLinks$RelatedPostId, 
+  RelatedTab <- aggregate(x = PostLinks$RelatedPostId,
                           by = PostLinks["RelatedPostId"],
-                          FUN = length,
-                          na.rm = TRUE)
+                          FUN = length)
   # SELECT RelatedPostId AS PostId, COUNT(*) AS NumLinks
   colnames(RelatedTab) <- c("PostId", "NumLinks")
   # WHERE Posts.PostTypeId=1
@@ -143,11 +139,8 @@ dplyr_2 <- function(Posts, PostLinks) {
 }
 
 data.table_2 <- function(Posts, PostLinks) {
-  # Input the solution here
-  #
   setDT(PostLinks)
   setDT(Posts)
-
   RelatedTab <- PostLinks[, .(NumLinks = .N), by = RelatedPostId]
   setnames(RelatedTab, "RelatedPostId", "PostId")
   x <- RelatedTab[Posts, on = c(PostId = "Id")][PostTypeId == 1]
@@ -155,6 +148,7 @@ data.table_2 <- function(Posts, PostLinks) {
   x <- x[, c("Title", "NumLinks"), with = FALSE]
   x <- na.omit(x)
   rownames(x) <- NULL
+  x
 }
 
 # -----------------------------------------------------------------------------#
@@ -185,7 +179,9 @@ sqldf_3 <- function(Comments, Posts, Users) {
 }
 
 base_3 <- function(Comments, Posts, Users) {
-  # Input the solution here
+  Posts <- as.data.frame(Posts)
+  Users <- as.data.frame(Users)
+  Comments <- as.data.frame(Comments)
   # GROUP BY PostId
   CmtTotScr <- aggregate(x = Comments$Score,
                          by = Comments["PostId"],
@@ -239,12 +235,10 @@ dplyr_3 <- function(Comments, Posts, Users) {
 }
 
 data.table_3 <- function(Comments, Posts, Users) {
-  # Input the solution here
-  #
+
   setDT(Comments)
   setDT(Posts)
   setDT(Users)
-
   CmtTotScr <- Comments[, .(CommentsTotalScore = sum(Score)), by = PostId]
   PostBestComments <- CmtTotScr[Posts, on = c(PostId = "Id")][PostTypeId == 1]
   PostBestComments <- PostBestComments[, c(
@@ -256,6 +250,7 @@ data.table_3 <- function(Comments, Posts, Users) {
   x <- x[, c("Title", "CommentCount", "ViewCount", "CommentsTotalScore",
              "DisplayName", "Reputation", "Location")]
   x <- x[order(-CommentsTotalScore)][1:10]
+  x
 }
 
 # -----------------------------------------------------------------------------#
@@ -294,15 +289,15 @@ sqldf_4 <- function(Posts, Users) {
 }
 
 base_4 <- function(Posts, Users) {
-  # Input the solution here
+  Posts <- as.data.frame(Posts)
+  Users <- as.data.frame(Users)
   # WHERE PostTypeId = 1
   ChoosenPosts <- Posts[Posts$PostTypeId == 1, ]
   # GROUP BY OwnerUserId
   Questions <- aggregate(
                         x = ChoosenPosts$OwnerUserId,
                         by = ChoosenPosts["OwnerUserId"],
-                        FUN = length,
-                        na.rm = TRUE)
+                        FUN = length)
   # SELECT COUNT(*) as QuestionsNumber, OwnerUserId
   colnames(Questions) <- c("OwnerUserId", "QuestionsNumber")
 
@@ -312,8 +307,7 @@ base_4 <- function(Posts, Users) {
   Answers <- aggregate(
                        x = ChoosenPosts2$OwnerUserId,
                        by = ChoosenPosts2["OwnerUserId"],
-                       FUN = length,
-                       na.rm = TRUE)
+                       FUN = length)
   # SELECT COUNT(*) as AnswersNumber, OwnerUserId
   colnames(Answers) <- c("OwnerUserId", "AnswersNumber")
 
@@ -368,14 +362,12 @@ dplyr_4 <- function(Posts, Users) {
       Reputation, UpVotes, DownVotes
     ) %>%
     filter_all(all_vars(!is.na(.)))
+  x
 }
 
 data.table_4 <- function(Posts, Users) {
-  # Input the solution here
-  #
   setDT(Posts)
   setDT(Users)
-
   Answers <- Posts[PostTypeId == 2]
   Answers <- Answers[, .(AnswersNumber = .N), by = OwnerUserId]
   Questions <- Posts[PostTypeId == 1]
@@ -390,6 +382,7 @@ data.table_4 <- function(Posts, Users) {
              "Reputation", "UpVotes", "DownVotes")]
   x <- x[order(-AnswersNumber)]
   x <- na.omit(x)
+  x
 }
 
 # -----------------------------------------------------------------------------#
@@ -427,15 +420,15 @@ sqldf_5 <- function(Posts, Users) {
 }
 
 base_5 <- function(Posts, Users) {
-  # Input the solution here
+  Posts <- as.data.frame(Posts)
+  Users <- as.data.frame(Users)
   # WHERE Posts.PostTypeId = 2
   ChoosenPosts <- Posts[Posts$PostTypeId == 2, ]
   # GROUP BY Posts.ParentId
   AnsCount <- aggregate(
                         x = ChoosenPosts$ParentId,
                         by = ChoosenPosts["ParentId"],
-                        FUN = length,
-                        na.rm = TRUE)
+                        FUN = length)
   # SELECT Posts.ParentId, COUNT(*) AS AnswersCount
   colnames(AnsCount) <- c("ParentId", "AnswersCount")
 
@@ -460,7 +453,7 @@ base_5 <- function(Posts, Users) {
                     "Location", "AverageAnswersCount")
   # ORDER BY AverageAnswersCount DESC
   x1 <- x1[order(x1$AverageAnswersCount, decreasing = TRUE), ]
-  rownames(x1) <- NULL
+  #rownames(x1) <- NULL
   # LIMIT 10
   head(x1, 10)
 }
@@ -487,16 +480,14 @@ dplyr_5 <- function(Posts, Users) {
     rename(AccountId = OwnerUserId)
   # Converting to data.frame, because
   # "setting row names on a tibble is deprecated"
-  x <- as.data.frame(x)
-  rownames(x) <- NULL
+  #x <- as.data.frame(x)
+  #rownames(x) <- NULL
+  x
 }
 
 data.table_5 <- function(Posts, Users) {
-  # Input the solution here
-  #
   setDT(Posts)
   setDT(Users)
-
   AnsCount <- Posts[PostTypeId == 2]
   AnsCount <- AnsCount[, .(AnswersCount = .N), by = ParentId]
 
@@ -511,4 +502,6 @@ data.table_5 <- function(Posts, Users) {
   x <- x[order(-AverageAnswersCount)][1:10]
   setnames(x, "OwnerUserId", "AccountId")
   x <- x[, c("AccountId", "DisplayName", "Location", "AverageAnswersCount")]
+  #rownames(x) <- NULL
+  x
 }

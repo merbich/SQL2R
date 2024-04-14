@@ -6,13 +6,16 @@ date: "2024-04-07"
 output: html_document
 ---
 
-# Bardzo krótki wstęp
-
-Odtwarzamy wynik zapytań SQL przy użyciu wywołań funkcji bazowych oraz tych, które udostępniają pakiety `dplyr` oraz `data.table`.
+# Wstęp
+Dla danych pięciu zapytań do bazy danych napisanych w języku SQL odtwarzamy ich wynik na różne sposoby:
+* pakiet `sqldf`
+* bazowe funkcje R
+* pakiet `dplyr`
+* pakiet `data.table`
+Celem projektu jest porównanie wyników oraz znaleźnienie najszybszego sposobu wykonywania zapytań SQL.
 
 ```{r}
 # Ustawienie katologu roboczego
-getwd()
 setwd("C:/Users/user/Desktop/sem6/r and python/praca domowa 1/SQL2R")
 ```
 
@@ -20,8 +23,6 @@ setwd("C:/Users/user/Desktop/sem6/r and python/praca domowa 1/SQL2R")
 # Wczytanie rozwiązań
 library(compare)
 library(microbenchmark)
-```
-```{r}
 source("Alina_Hryshko_PD1.R")
 ```
 
@@ -32,7 +33,7 @@ Users <- read.csv("data/Users.csv.gz")
 Comments <- read.csv("data/Comments.csv.gz")
 PostLinks <- read.csv("data/PostLinks.csv.gz")
 ```
-
+# Zapytania
 ## Zapytanie 1
 
 ### Porównanie wyników
@@ -40,16 +41,150 @@ PostLinks <- read.csv("data/PostLinks.csv.gz")
 ```{r cache = TRUE}
 result.sql <- sqldf_1(Posts, Users)
 result.base <- base_1(Posts, Users)
-compare(result.sql, result.base, allowAll = TRUE)
+result.dplyr <- dplyr_1(Posts, Users)
+result.data.table <- data.table_1(Posts, Users)
+```
+```{r}
+compare(result.sql, result.base,
+        result.dplyr, result.data.table,
+        allowAll = TRUE)
 ```
 
 ### Oszacowanie czasowe
+```{r cache = TRUE}
+microbenchmark(sqldf = sqldf_1(Posts, Users),
+               base = base_1(Posts, Users),
+               dplyr = dplyr_1(Posts, Users),
+               data.table = data.table_1(Posts, Users))
+```
+### Opis
+Szukamy w bazie danych, w których lokalizacjach użytkownicy wstawili najwięcej postów.
+Ograniczamy wynik do 10 najczęściej występujących lokalizacji.
+
+## Zapytanie 2
+
+### Porównanie wyników
 
 ```{r cache = TRUE}
-microbenchmark( sqldf = sqldf_1(Posts, Users),
-                base = base_1(Posts, Users))
+result.sql <- sqldf_2(Posts, PostLinks)
+result.base <- base_2(Posts, PostLinks)
+result.dplyr <- dplyr_2(Posts, PostLinks)
+result.data.table <- data.table_2(Posts, PostLinks)
+```
+```{r}
+compare(result.sql, result.base,
+        result.dplyr, result.data.table,
+        allowAll = TRUE)
 ```
 
+### Oszacowanie czasowe
+```{r cache = TRUE}
+microbenchmark(sqldf = sqldf_2(Posts, PostLinks),
+               base = base_2(Posts, PostLinks),
+               dplyr = dplyr_2(Posts, PostLinks),
+               data.table = data.table_2(Posts, PostLinks))
+```
 ### Opis
+Zapytanie liczy ilość powiązań (linków) dla postów. Potem sortuje je malejąco według
+liczby powiązań postu (najpierw te posty, które mają więcej linków). 
+ 
+## Zapytanie 3
 
-Wybieramy pytania dla których ocena zakceptowanej odpowiedzi od najlepiej ocenianej odpowiedzi jest mniejsza o co najmnie 50. 
+### Porównanie wyników
+
+```{r cache = TRUE}
+result.sql <- sqldf_3(Comments, Posts, Users)
+result.base <- base_3(Comments, Posts, Users)
+result.dplyr <- dplyr_3(Comments, Posts, Users)
+result.data.table <- data.table_3(Comments, Posts, Users)
+```
+```{r}
+compare(result.sql, result.base,
+        result.dplyr, result.data.table,
+        allowAll = TRUE)
+```
+
+### Oszacowanie czasowe
+```{r cache = TRUE}
+microbenchmark(sqldf = sqldf_3(Comments, Posts, Users),
+               base = base_3(Comments, Posts, Users),
+               dplyr = dplyr_3(Comments, Posts, Users),
+               data.table = data.table_3(Comments, Posts, Users))
+```
+### Opis
+Najpierw dla każdego postu obliczana jest suma "punktów" wszytskich komentarzy pod postem.
+Wynik jest lączony z tabelą Post dla uzyskania informacji o tytule postu, użytkowniku który go napisał itd.
+Wynik jest lączony z tabelą Users i posortowany malejąco według sumarycznej punktacji komentarzy.
+Wyświetlane jest 10 postów, które mają najwięcej punktów w swoich komentarzach, użytkownicy, którzy te posty napisali i inne informacje.
+## Zapytanie 4
+
+### Porównanie wyników
+
+```{r cache = TRUE}
+result.sql <- sqldf_4(Posts, Users)
+result.base <- base_4(Posts, Users)
+result.dplyr <- dplyr_4(Posts, Users)
+result.data.table <- data.table_4(Posts, Users)
+```
+```{r}
+compare(result.sql, result.base,
+        result.dplyr, result.data.table,
+        allowAll = TRUE)
+```
+
+### Oszacowanie czasowe
+```{r cache = TRUE}
+microbenchmark(sqldf = sqldf_4(Posts, Users),
+               base = base_4(Posts, Users),
+               dplyr = dplyr_4(Posts, Users),
+               data.table = data.table_4(Posts, Users))
+```
+### Opis
+Szukamy użytkowników, którzy wstawili najwięcej postów jako "odpowiedzi" na inne posty (które były pytaniami).
+Użytkownicy muszą mieć więcej postów-odpowiedzi, niż postów-pytań.
+Pokazujemy 5 użytkowników, które posiadają najwięcej postów-odpowiedzi.
+## Zapytanie 5
+
+### Porównanie wyników
+
+```{r cache = TRUE}
+result.sql <- sqldf_5(Posts, Users)
+result.base <- base_5(Posts, Users)
+result.dplyr <- dplyr_5(Posts, Users)
+result.data.table <- data.table_5(Posts, Users)
+```
+```{r}
+compare(result.base,
+        result.dplyr, result.data.table,
+        allowAll = TRUE)
+compare(result.base, result.sql, allowAll = TRUE)
+compare(result.dplyr, result.sql, allowAll = TRUE)
+compare(result.data.table, result.sql, allowAll = TRUE)
+```
+
+### Oszacowanie czasowe
+```{r cache = TRUE}
+microbenchmark(sqldf = sqldf_5(Posts, Users),
+               base = base_5(Posts, Users),
+               dplyr = dplyr_5(Posts, Users),
+               data.table = data.table_5(Posts, Users))
+```
+### Opis
+Zapytanie liczy średnią liczbę postów-odpowiedzi dla użytkowników.
+Wyświetlamy listę 10 użytkowników posortowanych malejąco według średniej liczby odpowiedzi, jakie dali na forum, wraz z ich danymi identyfikacyjnymi oraz lokalizacją.
+
+# Porównanie czasu wykonywania
+Pakiety `dplyr` oraz `data.table` okazały się najskuteczniejsze w wykonywaniu zapytań.
+Ich średni czas wykonania oraz mediana są znacznie mniejsze, niż w przypadku pakietu `sqldf` oraz użycia funkcij baazowych R.
+Wyniki `dplyr` i `data.table` są lepsze od innych, jednak wśród tych dwóch pakietów lepiej wykazał siebie `data.table`. Mimo to, że średnia `data.table` w niektórych zapytaniach
+większa od średniej `dplyr`, maksymalny czas wykonania zawsze był najmneijszy wśród wszytskich metod.
+
+Pakiet `sqldf` okazał się średnio najwolniejszą metodą, mimo swojej prostoty w użytku.
+Bazowe funcjie R pokazują trochę lepsze wyniki od `sqldf`, chociaż w niektórych zapytaniach średni czas wykonania pakietu `sqldf` był mniejszy.
+
+# Podsumowanie
+Łatwo zauważyć, że pakiet `sqldf` jest najbardziej przyjazny użytkownikom. Za pomocą tego pakietu najłatwiej jest odtworzyć zapytanie zapisane w języku SQL.
+Bazowe funkcje R są znacznie trudniejsze do zaimplementowania, natomiast nie wykazały się większą szybkością w porównaniu do innych metod.
+Pakiety `dplyr` i `data.table` okazały się najszybszymi metodami (w czym `data.table` minimalnie lepszy). 
+
+Pakiet `dplyr` jest przyjazny użytkownikom, posiada dobrą dokumentację oraz intuicyjne funkcje. Według mojej opinii jest to najlepszy sposób odtwarzania zapytań SQL.
