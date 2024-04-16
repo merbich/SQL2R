@@ -389,10 +389,10 @@ result.data.table &lt;- data.table_1(Posts, Users)</code></pre>
 <p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
-<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>dplyr</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
-<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>data.table</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
@@ -428,10 +428,10 @@ result.data.table &lt;- data.table_2(Posts, PostLinks)</code></pre>
 <p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
-<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>dplyr</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
-<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>data.table</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
@@ -467,10 +467,10 @@ result.data.table &lt;- data.table_3(Comments, Posts, Users)</code></pre>
 <p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
-<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>dplyr</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
-<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>data.table</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
@@ -496,21 +496,25 @@ informacji o tytule postu, użytkowniku który go napisał itd. Wynik jest
 lączony z tabelą Users i posortowany malejąco według sumarycznej
 punktacji komentarzy. Wyświetlane jest 10 postów, które mają najwięcej
 punktów w swoich komentarzach, użytkownicy, którzy te posty napisali i
-inne informacje. ## Zapytanie 4</p>
+inne informacje.</p>
 </div>
+</div>
+<div id="zapytanie-4" class="section level2">
+<h2>Zapytanie 4</h2>
 <div id="porównanie-wyników-3" class="section level3">
 <h3>Porównanie wyników</h3>
 <pre class="r"><code>result.sql &lt;- sqldf_4(Posts, Users)
 result.base &lt;- base_4(Posts, Users)
 result.dplyr &lt;- dplyr_4(Posts, Users)
 result.data.table &lt;- data.table_4(Posts, Users)</code></pre>
-<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych Porównanie
+wyników <code>sqldf</code> i funkcji bazowych</p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
-<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>dplyr</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
-<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>data.table</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
@@ -533,28 +537,31 @@ result.data.table &lt;- data.table_4(Posts, Users)</code></pre>
 <p>Szukamy użytkowników, którzy wstawili najwięcej postów jako
 “odpowiedzi” na inne posty (które były pytaniami). Użytkownicy muszą
 mieć więcej postów-odpowiedzi, niż postów-pytań. Pokazujemy 5
-użytkowników, które posiadają najwięcej postów-odpowiedzi. ## Zapytanie
-5</p>
+użytkowników, które posiadają najwięcej postów-odpowiedzi.</p>
 </div>
+</div>
+<div id="zapytanie-5" class="section level2">
+<h2>Zapytanie 5</h2>
 <div id="porównanie-wyników-4" class="section level3">
 <h3>Porównanie wyników</h3>
 <pre class="r"><code>result.sql &lt;- sqldf_5(Posts, Users)
 result.base &lt;- base_5(Posts, Users)
 result.dplyr &lt;- dplyr_5(Posts, Users)
 result.data.table &lt;- data.table_5(Posts, Users)</code></pre>
-<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych Porównanie
+wyników <code>sqldf</code> i funkcji bazowych</p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE
 ##   sorted
 ##   renamed rows
 ##   dropped row names</code></pre>
-<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>dplyr</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE
 ##   sorted
 ##   renamed rows
 ##   dropped row names</code></pre>
-<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<p>Porównanie wyników <code>sqldf</code> i <code>data.table</code></p>
 <pre class="r"><code>compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE

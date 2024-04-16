@@ -30,6 +30,7 @@ Comments <- read.csv("Comments.csv.gz")
 PostLinks <- read.csv("PostLinks.csv.gz")
 ```
 # Zapytania
+
 ## Zapytanie 1
 
 ### Porównanie wyników
@@ -135,6 +136,7 @@ Najpierw dla każdego postu obliczana jest suma "punktów" wszytskich komentarzy
 Wynik jest lączony z tabelą Post dla uzyskania informacji o tytule postu, użytkowniku który go napisał itd.
 Wynik jest lączony z tabelą Users i posortowany malejąco według sumarycznej punktacji komentarzy.
 Wyświetlane jest 10 postów, które mają najwięcej punktów w swoich komentarzach, użytkownicy, którzy te posty napisali i inne informacje.
+
 ## Zapytanie 4
 
 ### Porównanie wyników
@@ -171,6 +173,7 @@ microbenchmark(sqldf = sqldf_4(Posts, Users),
 Szukamy użytkowników, którzy wstawili najwięcej postów jako "odpowiedzi" na inne posty (które były pytaniami).
 Użytkownicy muszą mieć więcej postów-odpowiedzi, niż postów-pytań.
 Pokazujemy 5 użytkowników, które posiadają najwięcej postów-odpowiedzi.
+
 ## Zapytanie 5
 
 ### Porównanie wyników
