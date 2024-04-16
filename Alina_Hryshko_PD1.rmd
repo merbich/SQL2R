@@ -14,24 +14,20 @@ Dla danych pięciu zapytań do bazy danych napisanych w języku SQL odtwarzamy i
 * pakiet `data.table`
 Celem projektu jest porównanie wyników oraz znaleźnienie najszybszego sposobu wykonywania zapytań SQL.
 
-```{r}
-# Ustawienie katologu roboczego
-setwd("C:/Users/user/Desktop/sem6/r and python/praca domowa 1/SQL2R")
-```
-
-```{r message = FALSE}
+```{r, message = FALSE, warning=FALSE}
 # Wczytanie rozwiązań
 library(compare)
 library(microbenchmark)
+library(rmarkdown)
 source("Alina_Hryshko_PD1.R")
 ```
 
 ```{r}
 # Wczytanie danych
-Posts <- read.csv("data/Posts.csv.gz")
-Users <- read.csv("data/Users.csv.gz")
-Comments <- read.csv("data/Comments.csv.gz")
-PostLinks <- read.csv("data/PostLinks.csv.gz")
+Posts <- read.csv("Posts.csv.gz")
+Users <- read.csv("Users.csv.gz")
+Comments <- read.csv("Comments.csv.gz")
+PostLinks <- read.csv("PostLinks.csv.gz")
 ```
 # Zapytania
 ## Zapytanie 1
@@ -44,10 +40,18 @@ result.base <- base_1(Posts, Users)
 result.dplyr <- dplyr_1(Posts, Users)
 result.data.table <- data.table_1(Posts, Users)
 ```
-```{r}
-compare(result.sql, result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)
+Porównanie wyników `sqldf` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
+```
+Porównanie wyników `dplyr` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
+```
+Porównanie wyników `data.table` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)
 ```
 
 ### Oszacowanie czasowe
@@ -71,10 +75,18 @@ result.base <- base_2(Posts, PostLinks)
 result.dplyr <- dplyr_2(Posts, PostLinks)
 result.data.table <- data.table_2(Posts, PostLinks)
 ```
-```{r}
-compare(result.sql, result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)
+Porównanie wyników `sqldf` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
+```
+Porównanie wyników `dplyr` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
+```
+Porównanie wyników `data.table` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)
 ```
 
 ### Oszacowanie czasowe
@@ -98,12 +110,19 @@ result.base <- base_3(Comments, Posts, Users)
 result.dplyr <- dplyr_3(Comments, Posts, Users)
 result.data.table <- data.table_3(Comments, Posts, Users)
 ```
-```{r}
-compare(result.sql, result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)
+Porównanie wyników `sqldf` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
 ```
-
+Porównanie wyników `dplyr` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
+```
+Porównanie wyników `data.table` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)
+```
 ### Oszacowanie czasowe
 ```{r cache = TRUE}
 microbenchmark(sqldf = sqldf_3(Comments, Posts, Users),
@@ -126,10 +145,18 @@ result.base <- base_4(Posts, Users)
 result.dplyr <- dplyr_4(Posts, Users)
 result.data.table <- data.table_4(Posts, Users)
 ```
-```{r}
-compare(result.sql, result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)
+Porównanie wyników `sqldf` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
+```
+Porównanie wyników `dplyr` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
+```
+Porównanie wyników `data.table` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)
 ```
 
 ### Oszacowanie czasowe
@@ -153,16 +180,21 @@ result.base <- base_5(Posts, Users)
 result.dplyr <- dplyr_5(Posts, Users)
 result.data.table <- data.table_5(Posts, Users)
 ```
-```{r}
-compare(result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)
-compare(result.base, result.sql, allowAll = TRUE)
-compare(result.dplyr, result.sql, allowAll = TRUE)
-compare(result.data.table, result.sql, allowAll = TRUE)
+Porównanie wyników `sqldf` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
+```
+Porównanie wyników `dplyr` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
+```
+Porównanie wyników `data.table` i funkcji bazowych
+```{r cache = TRUE}
+compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)
 ```
 
-### Oszacowanie czasowe
+### Oszacowanie czasowe 
 ```{r cache = TRUE}
 microbenchmark(sqldf = sqldf_5(Posts, Users),
                base = base_5(Posts, Users),

@@ -1,19 +1,7 @@
 ### Przetwarzanie danych w językach R i Python 2024L
 ### Praca domowa nr. 1 / Homework Assignment no. 1
-###
-### WAŻNE
-### Ten plik powinien zawierać tylko rozwiązania zadań w postaci
-### definicji funkcji, załączenia niezbędnych bibliotek
-### i komentarzy do kodu.
-###
-### Raport powinien zawierać:
-### * source() tego pliku,
-### * odczytanie danych,
-### * dołączenie bibliotek,
-### * pomiary czasu wykonania (z mikrobenchmarkiem),
-### * porównanie równoważności wyników,
-### * interpretację zapytań.
-install.packages(c("sqldf", "dplyr", "data.table", "compare"))
+
+#install.packages(c("sqldf", "dplyr", "data.table", "compare", "rmarkdown"))
 
 
 library(dplyr)
@@ -217,8 +205,6 @@ base_3 <- function(Comments, Posts, Users) {
 }
 
 dplyr_3 <- function(Comments, Posts, Users) {
-  # Input the solution here
-  #
   CmtTotScr <- Comments %>%
     group_by(PostId) %>%
     summarise(CommentsTotalScore = sum(Score, na.rm = TRUE))
@@ -453,14 +439,12 @@ base_5 <- function(Posts, Users) {
                     "Location", "AverageAnswersCount")
   # ORDER BY AverageAnswersCount DESC
   x1 <- x1[order(x1$AverageAnswersCount, decreasing = TRUE), ]
-  #rownames(x1) <- NULL
+  rownames(x1) <- NULL
   # LIMIT 10
   head(x1, 10)
 }
 
 dplyr_5 <- function(Posts, Users) {
-  # Input the solution here
-  #
   AnsCount <- Posts %>%
     filter(PostTypeId == 2) %>%
     group_by(ParentId) %>%
@@ -469,6 +453,7 @@ dplyr_5 <- function(Posts, Users) {
   PostAuth <- inner_join(AnsCount, Posts, by = c("ParentId" = "Id")) %>%
     select(AnswersCount, ParentId, OwnerUserId)
   names(PostAuth)[which(names(PostAuth) == "ParentId")] <- "Id"
+
   x <- PostAuth %>%
     group_by(OwnerUserId) %>%
     summarise(AverageAnswersCount = mean(AnswersCount, na.rm = TRUE)) %>%
@@ -480,8 +465,8 @@ dplyr_5 <- function(Posts, Users) {
     rename(AccountId = OwnerUserId)
   # Converting to data.frame, because
   # "setting row names on a tibble is deprecated"
-  #x <- as.data.frame(x)
-  #rownames(x) <- NULL
+  x <- as.data.frame(x)
+  rownames(x) <- NULL
   x
 }
 
@@ -494,14 +479,13 @@ data.table_5 <- function(Posts, Users) {
   PostAuth <- AnsCount[Posts, on = c(ParentId = "Id")]
   setnames(PostAuth, "ParentId", "Id")
   PostAuth <- PostAuth[, c("AnswersCount", "Id", "OwnerUserId")]
-  x <- PostAuth[, .(AverageAnswersCount = 
+  x <- PostAuth[, .(AverageAnswersCount =
                       mean(AnswersCount, na.rm = TRUE)),
                       by = OwnerUserId]
-  #x <- x[order(-AverageAnswersCount)]
   x <- x[Users, on = c(OwnerUserId = "AccountId")]
   x <- x[order(-AverageAnswersCount)][1:10]
   setnames(x, "OwnerUserId", "AccountId")
   x <- x[, c("AccountId", "DisplayName", "Location", "AverageAnswersCount")]
-  #rownames(x) <- NULL
+  rownames(x) <- NULL
   x
 }
