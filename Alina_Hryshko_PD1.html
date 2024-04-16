@@ -366,24 +366,15 @@ bazowe funkcje R * pakiet <code>dplyr</code> * pakiet
 <code>data.table</code> Celem projektu jest porównanie wyników oraz
 znaleźnienie najszybszego sposobu wykonywania zapytań SQL.</p>
 <pre class="r"><code># Wczytanie rozwiązań
-library(compare)</code></pre>
-<pre><code>## Warning: package &#39;compare&#39; was built under R version 4.3.1</code></pre>
-<pre class="r"><code>library(microbenchmark)</code></pre>
-<pre><code>## Warning: package &#39;microbenchmark&#39; was built under R version 4.3.2</code></pre>
-<pre class="r"><code>library(rmarkdown)</code></pre>
-<pre><code>## Warning: package &#39;rmarkdown&#39; was built under R version 4.3.3</code></pre>
-<pre class="r"><code>source(&quot;Alina_Hryshko_PD1.R&quot;)</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.3.3</code></pre>
-<pre><code>## Warning: package &#39;sqldf&#39; was built under R version 4.3.3</code></pre>
-<pre><code>## Warning: package &#39;gsubfn&#39; was built under R version 4.3.3</code></pre>
-<pre><code>## Warning: package &#39;proto&#39; was built under R version 4.3.3</code></pre>
-<pre><code>## Warning: package &#39;RSQLite&#39; was built under R version 4.3.3</code></pre>
-<pre><code>## Warning: package &#39;data.table&#39; was built under R version 4.3.3</code></pre>
+library(compare)
+library(microbenchmark)
+library(rmarkdown)
+source(&quot;Alina_Hryshko_PD1.R&quot;)</code></pre>
 <pre class="r"><code># Wczytanie danych
-Posts &lt;- read.csv(&quot;data/Posts.csv.gz&quot;)
-Users &lt;- read.csv(&quot;data/Users.csv.gz&quot;)
-Comments &lt;- read.csv(&quot;data/Comments.csv.gz&quot;)
-PostLinks &lt;- read.csv(&quot;data/PostLinks.csv.gz&quot;)</code></pre>
+Posts &lt;- read.csv(&quot;Posts.csv.gz&quot;)
+Users &lt;- read.csv(&quot;Users.csv.gz&quot;)
+Comments &lt;- read.csv(&quot;Comments.csv.gz&quot;)
+PostLinks &lt;- read.csv(&quot;PostLinks.csv.gz&quot;)</code></pre>
 </div>
 <div id="zapytania" class="section level1">
 <h1>Zapytania</h1>
@@ -395,9 +386,15 @@ PostLinks &lt;- read.csv(&quot;data/PostLinks.csv.gz&quot;)</code></pre>
 result.base &lt;- base_1(Posts, Users)
 result.dplyr &lt;- dplyr_1(Posts, Users)
 result.data.table &lt;- data.table_1(Posts, Users)</code></pre>
-<pre class="r"><code>compare(result.sql, result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)</code></pre>
+<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
+<pre><code>## TRUE</code></pre>
+<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
+<pre><code>## TRUE</code></pre>
+<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
 </div>
 <div id="oszacowanie-czasowe" class="section level3">
@@ -408,10 +405,10 @@ result.data.table &lt;- data.table_1(Posts, Users)</code></pre>
                data.table = data.table_1(Posts, Users))</code></pre>
 <pre><code>## Unit: milliseconds
 ##        expr      min       lq     mean   median       uq       max neval
-##       sqldf 529.9708 563.5272 607.0403 590.4974 628.1416 1046.7092   100
-##        base 110.0641 119.6025 156.0561 131.9431 181.8131  377.0069   100
-##       dplyr  72.0323  79.6231 110.1969  88.3818 137.8072  324.7588   100
-##  data.table  72.8300  86.2383 125.9846 136.7362 146.8126  334.8457   100</code></pre>
+##       sqldf 515.2954 554.5782 661.3323 583.3823 622.3153 2493.9764   100
+##        base 110.0365 121.6213 175.8618 168.8388 187.7656  529.9155   100
+##       dplyr  71.3577  84.1227 138.1288 126.5716 144.4647  450.3268   100
+##  data.table  74.0632  84.7840 133.6317 135.4081 148.0904  374.3459   100</code></pre>
 </div>
 <div id="opis" class="section level3">
 <h3>Opis</h3>
@@ -428,9 +425,15 @@ lokalizacji.</p>
 result.base &lt;- base_2(Posts, PostLinks)
 result.dplyr &lt;- dplyr_2(Posts, PostLinks)
 result.data.table &lt;- data.table_2(Posts, PostLinks)</code></pre>
-<pre class="r"><code>compare(result.sql, result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)</code></pre>
+<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
+<pre><code>## TRUE</code></pre>
+<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
+<pre><code>## TRUE</code></pre>
+<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
 </div>
 <div id="oszacowanie-czasowe-1" class="section level3">
@@ -440,11 +443,11 @@ result.data.table &lt;- data.table_2(Posts, PostLinks)</code></pre>
                dplyr = dplyr_2(Posts, PostLinks),
                data.table = data.table_2(Posts, PostLinks))</code></pre>
 <pre><code>## Unit: milliseconds
-##        expr      min       lq      mean    median        uq      max neval
-##       sqldf 365.3643 384.3689 403.23076 392.67970 407.61355 632.3124   100
-##        base 115.2460 120.8755 144.23873 126.83545 175.88885 215.9076   100
-##       dplyr  52.2760  57.1310  72.77828  59.76175  99.36245 136.4331   100
-##  data.table  50.3498  57.9923  70.07947  60.41960  63.76695 138.2198   100</code></pre>
+##        expr      min        lq      mean    median       uq      max neval
+##       sqldf 355.2518 360.23255 379.59868 372.89320 396.2977 451.5513   100
+##        base 114.7584 116.85275 150.26205 163.01785 170.8890 363.7877   100
+##       dplyr  52.5472  53.48495  65.71103  54.84580  60.5884 125.3568   100
+##  data.table  50.8693  55.27605  78.87664  59.62985 105.0702 269.5230   100</code></pre>
 </div>
 <div id="opis-1" class="section level3">
 <h3>Opis</h3>
@@ -461,9 +464,15 @@ więcej linków).</p>
 result.base &lt;- base_3(Comments, Posts, Users)
 result.dplyr &lt;- dplyr_3(Comments, Posts, Users)
 result.data.table &lt;- data.table_3(Comments, Posts, Users)</code></pre>
-<pre class="r"><code>compare(result.sql, result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)</code></pre>
+<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
+<pre><code>## TRUE</code></pre>
+<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
+<pre><code>## TRUE</code></pre>
+<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
 </div>
 <div id="oszacowanie-czasowe-2" class="section level3">
@@ -474,10 +483,10 @@ result.data.table &lt;- data.table_3(Comments, Posts, Users)</code></pre>
                data.table = data.table_3(Comments, Posts, Users))</code></pre>
 <pre><code>## Unit: milliseconds
 ##        expr      min        lq      mean    median        uq       max neval
-##       sqldf 729.1460  757.0352  797.9546  791.4470  823.7550 1002.9824   100
-##        base 986.8972 1034.4461 1081.2841 1065.8016 1105.9111 1363.3774   100
-##       dplyr 245.2134  291.9149  332.1377  306.0742  350.8377  566.4621   100
-##  data.table  94.1165  100.2450  129.0040  103.8823  154.7201  371.0908   100</code></pre>
+##       sqldf 723.1861  761.6746  801.6761  790.9153  828.7043  1146.557   100
+##        base 924.3036 1010.1966 1085.6346 1058.7335 1134.2807  1503.823   100
+##       dplyr 238.6621  282.6059  331.8094  305.0211  340.9986  1189.315   100
+##  data.table  93.6187   99.7332  969.4999  104.9704  152.6145 84342.032   100</code></pre>
 </div>
 <div id="opis-2" class="section level3">
 <h3>Opis</h3>
@@ -495,9 +504,15 @@ inne informacje. ## Zapytanie 4</p>
 result.base &lt;- base_4(Posts, Users)
 result.dplyr &lt;- dplyr_4(Posts, Users)
 result.data.table &lt;- data.table_4(Posts, Users)</code></pre>
-<pre class="r"><code>compare(result.sql, result.base,
-        result.dplyr, result.data.table,
-        allowAll = TRUE)</code></pre>
+<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
+<pre><code>## TRUE</code></pre>
+<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
+<pre><code>## TRUE</code></pre>
+<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE</code></pre>
 </div>
 <div id="oszacowanie-czasowe-3" class="section level3">
@@ -507,11 +522,11 @@ result.data.table &lt;- data.table_4(Posts, Users)</code></pre>
                dplyr = dplyr_4(Posts, Users),
                data.table = data.table_4(Posts, Users))</code></pre>
 <pre><code>## Unit: milliseconds
-##        expr      min        lq      mean    median        uq      max neval
-##       sqldf 528.2967 543.11180 570.46821 561.17225 585.70425 843.3695   100
-##        base 415.4853 435.57355 483.90854 484.51575 498.74090 717.4127   100
-##       dplyr 272.5202 322.69425 342.46869 335.97945 350.56020 517.1743   100
-##  data.table  57.6637  63.13815  80.25869  64.56255  92.07955 305.8494   100</code></pre>
+##        expr      min        lq      mean    median       uq       max neval
+##       sqldf 531.9420 553.53570 614.44854 584.54000 631.7201 1044.2997   100
+##        base 414.0575 469.99750 517.31797 489.01390 531.6101 1018.9387   100
+##       dplyr 257.1872 312.57030 342.11880 330.14190 351.9150  543.3303   100
+##  data.table  57.8871  63.16785  84.03649  65.80965 106.8687  348.4329   100</code></pre>
 </div>
 <div id="opis-3" class="section level3">
 <h3>Opis</h3>
@@ -527,46 +542,25 @@ użytkowników, które posiadają najwięcej postów-odpowiedzi. ## Zapytanie
 result.base &lt;- base_5(Posts, Users)
 result.dplyr &lt;- dplyr_5(Posts, Users)
 result.data.table &lt;- data.table_5(Posts, Users)</code></pre>
-<pre class="r"><code>compare(result.base, result.sql, allowAll = TRUE)</code></pre>
+<p>Porównanie wyników <code>sqldf</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE
 ##   sorted
 ##   renamed rows
 ##   dropped row names</code></pre>
-<pre class="r"><code>compare(result.dplyr, result.sql, allowAll = TRUE)</code></pre>
-<pre><code>## Warning: Setting row names on a tibble is deprecated.
-## Setting row names on a tibble is deprecated.</code></pre>
+<p>Porównanie wyników <code>dplyr</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE
 ##   sorted
 ##   renamed rows
-##   dropped row names
-##   dropped attributes</code></pre>
-<pre class="r"><code>compare(result.data.table, result.sql, allowAll = TRUE)</code></pre>
+##   dropped row names</code></pre>
+<p>Porównanie wyników <code>data.table</code> i funkcji bazowych</p>
+<pre class="r"><code>compare(as.data.frame(result.sql),
+        as.data.frame(result.data.table), allowAll = TRUE)</code></pre>
 <pre><code>## TRUE
 ##   sorted
 ##   renamed rows
-##   dropped row names
-##   dropped attributes</code></pre>
-<pre class="r"><code>compare(result.base, result.data.table, allowAll = TRUE)</code></pre>
-<pre><code>## TRUE
-##   sorted
-##   renamed rows
-##   dropped row names
-##   dropped attributes</code></pre>
-<pre class="r"><code>compare(result.base, result.dplyr, allowAll = TRUE)</code></pre>
-<pre><code>## Warning: Setting row names on a tibble is deprecated.
-## Setting row names on a tibble is deprecated.</code></pre>
-<pre><code>## TRUE
-##   renamed rows
-##   dropped row names
-##   dropped attributes</code></pre>
-<pre class="r"><code>compare(result.data.table, result.dplyr, allowAll = TRUE)</code></pre>
-<pre><code>## Warning: Setting row names on a tibble is deprecated.
-## Setting row names on a tibble is deprecated.</code></pre>
-<pre><code>## TRUE
-##   sorted
-##   renamed rows
-##   dropped row names
-##   dropped attributes</code></pre>
+##   dropped row names</code></pre>
 </div>
 <div id="oszacowanie-czasowe-4" class="section level3">
 <h3>Oszacowanie czasowe</h3>
@@ -575,11 +569,11 @@ result.data.table &lt;- data.table_5(Posts, Users)</code></pre>
                dplyr = dplyr_5(Posts, Users),
                data.table = data.table_5(Posts, Users))</code></pre>
 <pre><code>## Unit: milliseconds
-##        expr      min       lq     mean    median       uq       max neval
-##       sqldf 586.5575 622.4626 670.2659 646.88410 682.6841  951.0782   100
-##        base 813.9091 882.1631 957.2459 916.03030 991.1737 1425.7120   100
-##       dplyr 520.6540 619.2143 695.4523 670.14520 735.3852 1064.5795   100
-##  data.table  80.8379  86.2981 114.0354  92.19995 129.3844  442.8807   100</code></pre>
+##        expr      min       lq     mean    median        uq       max neval
+##       sqldf 575.7761 589.1439 616.5007 609.45335 636.11075  727.7756   100
+##        base 777.8100 837.0993 884.2206 866.02650 895.67365 1215.3299   100
+##       dplyr 472.5169 561.2331 609.9929 609.49820 644.11330  810.1547   100
+##  data.table  82.2446  87.4710 100.9474  89.67605  95.09495  295.4381   100</code></pre>
 </div>
 <div id="opis-4" class="section level3">
 <h3>Opis</h3>

@@ -44,11 +44,11 @@ Porównanie wyników `sqldf` i funkcji bazowych
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
 ```
-Porównanie wyników `dplyr` i funkcji bazowych
+Porównanie wyników `sqldf` i `dplyr`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
 ```
-Porównanie wyników `data.table` i funkcji bazowych
+Porównanie wyników `sqldf` i `data.table`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)
@@ -79,11 +79,11 @@ Porównanie wyników `sqldf` i funkcji bazowych
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
 ```
-Porównanie wyników `dplyr` i funkcji bazowych
+Porównanie wyników `sqldf` i `dplyr`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
 ```
-Porównanie wyników `data.table` i funkcji bazowych
+Porównanie wyników `sqldf` i `data.table`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)
@@ -114,11 +114,11 @@ Porównanie wyników `sqldf` i funkcji bazowych
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
 ```
-Porównanie wyników `dplyr` i funkcji bazowych
+Porównanie wyników `sqldf` i `dplyr`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
 ```
-Porównanie wyników `data.table` i funkcji bazowych
+Porównanie wyników `sqldf` i `data.table`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)
@@ -146,14 +146,15 @@ result.dplyr <- dplyr_4(Posts, Users)
 result.data.table <- data.table_4(Posts, Users)
 ```
 Porównanie wyników `sqldf` i funkcji bazowych
+Porównanie wyników `sqldf` i funkcji bazowych
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
 ```
-Porównanie wyników `dplyr` i funkcji bazowych
+Porównanie wyników `sqldf` i `dplyr`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
 ```
-Porównanie wyników `data.table` i funkcji bazowych
+Porównanie wyników `sqldf` i `data.table`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)
@@ -181,14 +182,15 @@ result.dplyr <- dplyr_5(Posts, Users)
 result.data.table <- data.table_5(Posts, Users)
 ```
 Porównanie wyników `sqldf` i funkcji bazowych
+Porównanie wyników `sqldf` i funkcji bazowych
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.base), allowAll = TRUE)
 ```
-Porównanie wyników `dplyr` i funkcji bazowych
+Porównanie wyników `sqldf` i `dplyr`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql), as.data.frame(result.dplyr), allowAll = TRUE)
 ```
-Porównanie wyników `data.table` i funkcji bazowych
+Porównanie wyników `sqldf` i `data.table`
 ```{r cache = TRUE}
 compare(as.data.frame(result.sql),
         as.data.frame(result.data.table), allowAll = TRUE)
